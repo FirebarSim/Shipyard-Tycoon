@@ -1,52 +1,60 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class World
 {
     Tile[,] tiles;
-    int width;
-    public int Width
-    {
-        get
-        {
-            return width;
-        }
-    }
-    int height;
-    public int Height
-    {
-        get
-        {
-            return height;
-        }
-    }
 
+    Dictionary<string, InstalledObject> installedObjectPrototypes;
+
+    public int Width { get; protected set; }
+    public int Height { get; protected set; }
+
+    Action<InstalledObject> cbInstalledObjectCreated;
+    Action<Tile> cbTileChanged;
+    
+    // TODO: Most likely to be replaced with a dedicated Queue class.
+    public Queue<Job> jobQueue;
+
+    //Initialises a new instance of the World class.
     public World (int width = 100, int height = 100)
     {
-        this.width = width;
-        this.height = height;
+        jobQueue = new Queue<Job>();
 
-        tiles = new Tile[width, height];
+        Width = width;
+        Height = height;
 
-        for (int x = 0; x < width; x++)
+        tiles = new Tile[Width, Height];
+
+        for (int x = 0; x < Width; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < Height; y++)
             {
                 tiles[x,y] = new Tile(this, x, y);
             }
         }
 
-        Debug.Log("World created with " + (width * height) + " tiles.");
+        Debug.Log("World created with " + (Width * Height) + " tiles.");
 
+        CreateInstalledObjectPrototypes();
+
+    }
+
+    void CreateInstalledObjectPrototypes()
+    {
+        installedObjectPrototypes = new Dictionary<string, InstalledObject>();
+
+        installedObjectPrototypes.Add("SeaWall", InstalledObject.CreatePrototype("SeaWall",0,1,1,true));
     }
 
     public void RandomiseTiles ()
     {
-        for (int x = 0; x < width; x++)
+        for (int x = 0; x < Width; x++)
         {
-            for (int y = 0; y < height; y++)
+            for (int y = 0; y < Height; y++)
             {
-                if (Random.Range(0,2) == 0)
+                if (UnityEngine.Random.Range(0,2) == 0)
                 {
                     tiles[x, y].Type = Tile.TileType.DeepWater;
                 }
@@ -93,11 +101,48 @@ public class World
 
     public Tile GetTileAt (int x, int y)
     {
-        if (x>width ||x < 0)
+        if (x>Width || x<0 || y>Height || y<0)
         {
             Debug.LogError("Tile (" + x + ", " + y + ") is out of range.");
             return null;
         }
         return tiles[x, y];
+    }
+
+    public void PlaceInstalledObject(string objectType, Tile t)
+    {
+        // TODO: This assumes 1x1 objects with no rotation.
+
+        if(installedObjectPrototypes.ContainsKey(objectType) == false)
+        {
+            Debug.LogError("InstalledObjectPrototypes doesn't contain a proto for key: " + objectType);
+            return;
+        }
+
+        InstalledObject obj = InstalledObject.PlaceInstance(installedObjectPrototypes[objectType], t);
+
+        if (obj == null) {
+            //Failed to place object, likely something there already.
+            return;
+        }
+
+        if(cbInstalledObjectCreated != null) {
+            cbInstalledObjectCreated(obj);
+        }
+    }
+
+    public void RegisterInstalledObjectCreated (Action<InstalledObject> callbackfunc) {
+        cbInstalledObjectCreated += callbackfunc;
+    }
+
+    public void UnregisterInstalledObjectCreated(Action<InstalledObject> callbackfunc) {
+        cbInstalledObjectCreated -= callbackfunc;
+    }
+
+    public bool IsInstalledObjectPlacementValid (string objType, Tile t) {
+        if(installedObjectPrototypes.ContainsKey(objType) == false) {
+            Debug.LogError("IsInstalledObjectPlacementValid - Object Type " + objType + " is not in object prototypes.");
+        }
+        return installedObjectPrototypes[objType].funcPositionValidation(t);
     }
 }

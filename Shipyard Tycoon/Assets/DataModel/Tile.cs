@@ -29,32 +29,18 @@ public class Tile
 
     TileType type = TileType.Land;
 
-    LooseObject looseObject;
-    InstalledObject installedObject;
-
-    World world;
-    int x;
-    public int X
-    {
-        get
-        {
-            return x;
-        }
-    }
-    int y;
-    public int Y
-    {
-        get
-        {
-            return y;
-        }
-    }
+    public LooseObject looseObject { get; protected set; }
+    public InstalledObject installedObject { get; protected set; }
+    public Job pendingInstalledObject;
+    public World world { get; protected set; }
+    public int X { get; protected set; }
+    public int Y { get; protected set; }
 
     public Tile (World world, int x, int y)
     {
         this.world = world;
-        this.x = x;
-        this.y = y;
+        this.X = x;
+        this.Y = y;
     }
 
     public void RegisterTileTypeChangedCallback(Action<Tile> callback)
@@ -67,4 +53,22 @@ public class Tile
         cbTileTypeChanged -= callback;
     }
 
+    public bool PlaceObject(InstalledObject objectInstance)
+    {
+        if (objectInstance == null)
+        {
+            installedObject = null;
+            return true;
+        }
+
+
+        if (installedObject != null)
+        {
+            Debug.LogError("Trying to install an object to a tile that already has an installed object.");
+            return false;
+        }
+
+        installedObject = objectInstance;
+        return true;
+    }
 }

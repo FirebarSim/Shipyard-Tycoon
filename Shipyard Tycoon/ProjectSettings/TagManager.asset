@@ -16,8 +16,8 @@ TagManager:
   - 
   - PostProcessing
   - Environment
-  - 
-  - 
+  - Tiles
+  - InstalledObjects
   - 
   - 
   - 
@@ -41,4 +41,13 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: InstalledObjects
+    uniqueID: 1559072825
+    locked: 0
+  - name: Vehicles
+    uniqueID: 1934506921
+    locked: 0
+  - name: TileUI
+    uniqueID: 4009798017
     locked: 0

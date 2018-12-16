@@ -61,12 +61,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Controllers\MouseController.cs" />
+    <Compile Include="Assets\Controllers\ShipCreator.cs" />
     <Compile Include="Assets\Controllers\WorldController.cs" />
     <Compile Include="Assets\DataModel\InstalledObject.cs" />
+    <Compile Include="Assets\DataModel\Job.cs" />
     <Compile Include="Assets\DataModel\LooseObject.cs" />
     <Compile Include="Assets\DataModel\Tile.cs" />
     <Compile Include="Assets\DataModel\World.cs" />
+    <Compile Include="Assets\Utilities\SimplePool.cs" />
+    <None Include="Assets\Interface\Kenney_UI_Pack\Spritesheet\yellowSheet.xml" />
+    <None Include="Assets\Interface\Kenney_UI_Pack\Spritesheet\greenSheet.xml" />
+    <None Include="Assets\Interface\Kenney_UI_Pack\Spritesheet\redSheet.xml" />
     <None Include="Assets\Maps\Map.txt" />
+    <None Include="Assets\Interface\Kenney_UI_Pack\license.txt" />
+    <None Include="Assets\Interface\Kenney_UI_Pack\Spritesheet\greySheet.xml" />
+    <None Include="Assets\Interface\Kenney_UI_Pack\Spritesheet\blueSheet.xml" />
     <Reference Include="UnityEditor.StandardEvents">
       <HintPath>D:/GitHub/Shipyard Tycoon/Shipyard Tycoon/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
     </Reference>
